@@ -1,5 +1,8 @@
 package parser;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
 public class Parser {
 
     public void readPage() {
