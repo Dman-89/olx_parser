@@ -1,34 +1,30 @@
 package parser;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Parser {
 
-    public void readPage() {
-        System.setProperty("webdriver.chrome.driver","C:\\chromedriver.exe");
+    public void readPage(String keyphrase) throws InterruptedException {
+        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
         WebDriver driver = new ChromeDriver();
-        String baseUrl = "http://demo.guru99.com/test/newtours/";
-        String expectedTitle = "Welcome: Mercury Tours";
-        String actualTitle = "";
+        String baseUrl = "https://www.olx.kz/";
 
-        // launch Fire fox and direct it to the Base URL
+        // launch chromedriver and direct it to the Base URL
         driver.get(baseUrl);
 
         // get the actual value of the title
-        actualTitle = driver.getTitle();
+        String actualTitle = driver.getTitle();
+        WebElement inputSearchBox = driver.findElement(By.xpath("//*[@id=\"headerSearch\"]"));
+        inputSearchBox.sendKeys(keyphrase);
+        WebElement searchLaunchButton = driver.findElement(By.xpath("//*[@id=\"searchmain\"]/div/fieldset/span"));
+        searchLaunchButton.click();
 
-        /*
-         * compare the actual title of the page with the expected one and print
-         * the result as "Passed" or "Failed"
-         */
-        if (actualTitle.contentEquals(expectedTitle)){
-            System.out.println("Test Passed!");
-        } else {
-            System.out.println("Test Failed");
-        }
+        System.out.println("button pushed");
 
-        //close Fire fox
+        Thread.sleep(4000);
         driver.close();
     }
 
