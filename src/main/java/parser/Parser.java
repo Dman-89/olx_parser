@@ -2,11 +2,11 @@ package parser;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import utils.Utils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser {
 
@@ -41,28 +41,47 @@ public class Parser {
         List<WebElement> pages = pagesContainer.findElements(By.xpath("//span[contains(@class, 'item') and contains(@class, 'fleft')]"));
 
         String mainHandle= driver.getWindowHandle();
-        System.out.println("main handle" + mainHandle);
+//        System.out.println("main handle: " + mainHandle);
 
         WebElement offersTable = driver.findElement(By.xpath("//*[@id=\"offers_table\"]"));
         List<WebElement> offersList = offersTable.findElements(By.className("marginright5"));
-        Random random = new Random();
         offersList.forEach(i -> {
             if (exclusions.stream().noneMatch((new String(i.getText().toLowerCase().getBytes(StandardCharsets.UTF_8), Charset.forName("CP1251"))::contains))) {
-//                System.out.println(new String(i.getText().toLowerCase().getBytes(StandardCharsets.UTF_8), Charset.forName("CP1251")));
+//                Utils.printCP1251ToUtf8(i.getText());
+
                 i.sendKeys(Keys.chord(Keys.CONTROL, Keys.ENTER));
-                try {
-                    Thread.sleep(random.nextInt(7000));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                String handle = driver.getWindowHandle();
-                System.out.println("curr handle" + handle);
+                Utils.randomPause();
+
                 List<String> handles = new ArrayList<>(driver.getWindowHandles()); //LinkedHashSet
-//                handles.forEach(System.out::println);
                 driver.switchTo().window(handles.get(handles.size() - 1));
+//                System.out.println("current handle: " + driver.getWindowHandle());
+
+                WebElement infoBox = driver.findElement(By.className("css-1wws9er"));
+                WebElement offerDatePublished = infoBox.findElement(By.cssSelector("span[data-cy='ad-posted-at']"));
+                Utils.printCP1251ToUtf8(offerDatePublished.getText());
+                WebElement offerPriceAndCurrency = infoBox.findElement(By.xpath("//h3[contains(@class, 'css-okktvh-Text') and contains(@class, 'eu5v0x0')]"));
+                Utils.printCP1251ToUtf8(offerPriceAndCurrency.getText());
+                WebElement offerHeader = infoBox.findElement(By.cssSelector("h1[data-cy='ad_title']"));
+                Utils.printCP1251ToUtf8(offerHeader.getText());
+                WebElement offerDescription = infoBox.findElement(By.cssSelector("div[data-cy='ad_description']")).findElement(By.xpath("div"));
+                Utils.printCP1251ToUtf8(offerDescription.getText());
+
+                WebElement sellerCard = driver.findElement(By.cssSelector("div[data-cy='seller_card']"));
+                WebElement sellerName = sellerCard.findElement(By.cssSelector("h2"));
+                Utils.printCP1251ToUtf8(sellerName.getText());
+
+                WebElement sellerPhoneButton = sellerCard.findElement(By.cssSelector("button[data-cy='ad-contact-phone']"));
+                sellerPhoneButton.sendKeys("\n");
+                System.out.println("CLICK ON PHONE BUTTON");
+                Utils.randomPause();
+                WebElement sellerPhone = sellerPhoneButton.findElement(By.cssSelector("a[data-testid='contact-phone']"));
+                Utils.printCP1251ToUtf8(sellerPhone.getText());
+
+                WebElement sellerLocation = driver.findElement(By.cssSelector("section[class='css-1tgtvwl']"));
+                Utils.printCP1251ToUtf8(sellerLocation.getText());
+                driver.switchTo().window(mainHandle);
 
             }
         });
     }
-
 }
