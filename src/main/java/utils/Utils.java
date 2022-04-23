@@ -13,8 +13,11 @@ public class Utils {
     }
 
     public static void randomPause() {
+        randomPause(7000);
+    }
+    public static void randomPause(int boundMillis) {
         try {
-            Thread.sleep(random.nextInt(7000));
+            Thread.sleep(random.nextInt(boundMillis));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
